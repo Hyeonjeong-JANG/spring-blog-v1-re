@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 @Controller
 public class BoardController {
 
-    @GetMapping("/" )
+    @GetMapping({"/", "/board"})
     public String index() {
         return "index";
     }
