@@ -23,6 +23,19 @@ public class UserRepository {
         query.executeUpdate();
     }
 
+    public User findByUsername(String username) {
+        Query query = em.createNativeQuery("select * from user_tb where username=?", User.class);
+        query.setParameter(1, username);
+
+        User user = null;
+        try {
+            user = (User) query.getSingleResult();
+        } catch (Exception e) {
+            return null;
+        }
+        return user;
+    }
+
     public User findByUsernameAndPassword(UserRequest.LoginDTO reqDTO) {
         Query query = em.createNativeQuery("select * from user_tb where username=? and password=?", User.class);
         query.setParameter(1, reqDTO.getUsername());

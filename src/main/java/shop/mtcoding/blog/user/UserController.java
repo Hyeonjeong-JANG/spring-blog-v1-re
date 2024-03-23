@@ -20,9 +20,21 @@ public class UserController {
 
     @PostMapping("/join")
     public String join(UserRequest.JoinDTO reqDTO) {
-        System.out.println(reqDTO);
+        // 1. 유효성 검사
+        if (reqDTO.getUsername().length()<3){
+            return "error/400";
+        }
 
-        userRepository.save(reqDTO);
+        // 2. 동일 username 체크
+
+
+        // 3. Model 필요(위임, DB 연결)
+        // select * from user_tb where username = ? and password = ?;
+        try {
+            userRepository.save(reqDTO);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         return "redirect:/loginForm";
     }
 
@@ -34,10 +46,12 @@ public class UserController {
     @PostMapping("/login")
     public String login(UserRequest.LoginDTO reqDTO, HttpServletRequest request) {
 
+        // 1. 유효성 검사
         if (reqDTO.getUsername().length() < 3) {
             return "error/400";
         }
 
+        // 3. Model 필요(위임, DB 연결)
         User user = userRepository.findByUsernameAndPassword(reqDTO);
 
         if (user == null) {
