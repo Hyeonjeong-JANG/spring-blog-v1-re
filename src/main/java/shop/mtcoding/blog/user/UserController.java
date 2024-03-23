@@ -45,7 +45,7 @@ public class UserController {
         } else {
             session.setAttribute("sessionUser", user);
         }
-        return null;
+        return "redirect:/";
     }
 
     @GetMapping("/user/update-form")
