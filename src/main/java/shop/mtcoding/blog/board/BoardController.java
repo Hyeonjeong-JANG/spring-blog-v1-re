@@ -48,8 +48,7 @@ public class BoardController {
 
     @GetMapping("/board/{id}")
     public String detail(@PathVariable Integer id, HttpServletRequest request) {
-        BoardResponse.DetailDTO respDTO = boardRepository.findById(id);
-        request.setAttribute("board", respDTO);
+        BoardResponse.DetailDTO respDTO = boardRepository.findByIdWithUser(id);
 
         boolean pageOwner = false;
 
@@ -60,7 +59,26 @@ public class BoardController {
             }
         }
 
+        request.setAttribute("board", respDTO);
         request.setAttribute("pageOwner", pageOwner);
         return "board/detail";
+    }
+
+    @PostMapping("/board/{id}/delete")
+    public String delete(@PathVariable Integer id, HttpServletRequest request) {
+        User sessionUser = (User) session.getAttribute("sessionUser");
+        if (sessionUser == null) {
+            return "redirect:/loginForm";
+        }
+
+        Board board = boardRepository.findById(id);
+        if (board.getUserId() != sessionUser.getId()) {
+            request.setAttribute("status", 403);
+            request.setAttribute("msg", "게시글을 삭제할 권한이 없습니다.");
+            return "error/40x";
+        }
+
+        boardRepository.deleteById(id);
+        return "redirect:/";
     }
 }
